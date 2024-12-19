@@ -10,6 +10,9 @@ import numpy as np
 import os
 import warnings
 from ultralytics import YOLO
+import random
+import string 
+import io
 
 def pad_to_square(image):
     width, height = image.size
