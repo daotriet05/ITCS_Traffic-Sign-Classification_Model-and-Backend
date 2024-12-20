@@ -14,6 +14,14 @@ import random
 import string 
 import io
 
+def save_image(image_bytes, prefix):
+    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    filename = f"{prefix}_{random_suffix}.jpg"
+    filepath = os.path.join('localized_obj', filename)
+    with open(filepath, 'wb') as f:
+        f.write(image_bytes.getbuffer())
+    return filepath
+
 def pad_to_square(image):
     width, height = image.size
 
@@ -36,9 +44,14 @@ def load_image(image_path, img_cols, img_rows):
         transforms.ToTensor()
     ])
     image = pad_to_square(image)
-    image.save('outputs/crop.jpg')
+    
+    binn = io.BytesIO()
+    image.save(binn, format='JPEG')
+    binn.seek(0)
+    path_crop = save_image(binn, 'crop')
+    
     image = transform(image).unsqueeze(0)
-    return image
+    return image, path_crop
 
 def load_model(extractor, classifier, localizer_path):
     
@@ -56,14 +69,6 @@ def load_model(extractor, classifier, localizer_path):
     stn_weight = YOLO(localizer_path)
 
     return (net1, net2, stn_weight)
-
-def save_image(image_bytes, prefix):
-    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-    filename = f"{prefix}_{random_suffix}.jpg"
-    filepath = os.path.join('localized_obj', filename)
-    with open(filepath, 'wb') as f:
-        f.write(image_bytes.getbuffer())
-    return filepath
 
 def localizer(original_image, stn_weight):
     new_width = 64
@@ -107,7 +112,7 @@ def inference(net, image_path):
 
     image_localized = localizer(image, stn_weight)
 
-    image = load_image(image_localized, 64, 64).to(device)
+    image, path_crop = load_image(image_localized, 64, 64).to(device)
     with torch.no_grad():
         feat_sem, feat_illu, _ = net1.extract(image, is_warping=True)
         
@@ -123,7 +128,7 @@ def inference(net, image_path):
     buffer_illu.seek(0)
 
     # Continue with net2 inference
-    image = Image.open(buffer_sem)
+    image = Image.open(path_crop)
     image = image.resize((30, 30))
     image = np.array(image)
     image_tensor = torch.tensor(image.transpose(2, 0, 1), dtype=torch.float32).unsqueeze(0).to(device)
