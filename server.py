@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load your TensorFlow model
-net = load_model('stns.pth', 'traffic_classifier.pth', 'localizer.pt')
+net = load_model('stns.pth', 'traffic_classifier.pth', 'best.pt')
 print("Model loaded successfully.")
 
 # Define the image transformation
