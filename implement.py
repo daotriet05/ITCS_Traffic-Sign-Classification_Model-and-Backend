@@ -1,7 +1,7 @@
 import torch
 from torchvision import transforms
 from PIL import Image, ImageOps
-from models import get_model
+from models import get_model, STN
 import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
@@ -9,7 +9,6 @@ from models.cnn import TrafficSignModel
 import numpy as np
 import os
 import warnings
-from ultralytics import YOLO
 import random
 import string 
 import io
@@ -66,7 +65,7 @@ def load_model(extractor, classifier, localizer_path):
     net2.load_state_dict(torch.load(classifier, map_location=device))
     net2.eval()
 
-    stn_weight = YOLO(localizer_path)
+    stn_weight = STN(localizer_path)
 
     return (net1, net2, stn_weight)
 
