@@ -21,3 +21,7 @@ Ensure Python 3.9+ is installed. Install the required dependencies using:
 
 ```bash
 pip install -r requirements.txt
+
+python train.py #training
+
+python main.py #inference
