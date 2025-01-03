@@ -4,6 +4,8 @@ This project implements a Sillnet and Convolutional Neural Network (CNN) to extr
 
 ---
 
+![image](https://github.com/user-attachments/assets/d09ebb1d-9a2b-4ed3-a934-6c45a1433a7d)
+
 ## Dataset
 
 Download the dataset from Kaggle:
