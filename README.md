@@ -27,3 +27,5 @@ pip install -r requirements.txt
 python train.py #training
 
 python main.py #inference
+
+python server.py #backend
